@@ -1,0 +1,6 @@
+include ':FoxDevFrame'
+include ':client'
+include ':server'
+include ':common'
+include ':app'
+rootProject.name = "Coupon"
