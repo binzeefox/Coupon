@@ -1,4 +1,4 @@
-package com.binzee.foxdevframe.utils.socket;
+package com.binzee.foxdevframe.utils.net.socket;
 
 import android.Manifest;
 import android.util.Log;
@@ -84,9 +84,20 @@ public class ServerHelper {
     }
 
     /**
-     * 开启服务器
+     * 默认带心跳包
+     *
+     * @author tong.xw 2021/01/14 10:17
      */
     public void open() {
+        open(true);
+    }
+
+    /**
+     * 开启服务器
+     *
+     * @param withPulse 是否开启心跳包
+     */
+    public void open(boolean withPulse) {
         if (mServer.isClosed()) return;
         mWorkExecutor.execute(() -> {
             while (!mServer.isClosed()) {
@@ -103,6 +114,8 @@ public class ServerHelper {
                 }
             }
         });
+
+        if (!withPulse) return;
         //启动心跳包
         mWorkExecutor.execute(() -> {
             while (!mServer.isClosed()) {
@@ -207,7 +220,7 @@ public class ServerHelper {
      * 发送心跳
      */
     private void pulse() {
-        for (Socket client: mClientMap.values()) {
+        for (Socket client : mClientMap.values()) {
             String pulse = mPulseInterceptor.onIntercept(client);
             sendTo(client, pulse);
             Log.d(TAG, "pulse sent: " + pulse + " target = " + client.getRemoteSocketAddress());
